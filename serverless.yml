@@ -12,6 +12,6 @@ functions:
     handler: tasks.handler
     events:
         - http:
-        path: tasks
-        method: get
-        cors: true
+            path: tasks
+            method: get
+            cors: true
