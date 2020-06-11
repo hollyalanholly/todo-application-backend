@@ -30,15 +30,11 @@ app.get("/tasks", function (req, res) {
     };
 
     if(taskIdToBeDeleted > 6 || taskIdToBeDeleted<1) {
-      res.status(404);
-      someResponse = {
-        message: "Task " + taskIdToBeDeleted + " does NOT exist"
+      res.status(404).send("Task " + taskIdToBeDeleted + " does NOT exist")  
       }
-    }  
-
+    
     res.send({ 
-       someResponse
-         
+       someResponse     
   });
 
   });
