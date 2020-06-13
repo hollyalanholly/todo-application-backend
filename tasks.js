@@ -2,11 +2,20 @@ const express = require("express");
 const serverless = require("serverless-http");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const mysql = require("mysql");
 
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
+
+//connecting to database
+const connection = mysql.createConnection({
+  host:"tr-course-instance1.chxrnd0gkww3.eu-west-2.rds.amazonaws.com",
+  user:"root",
+  password:"",
+  database:"todos",
+})
 
 app.get("/tasks", function (req, res) {
 
@@ -19,19 +28,70 @@ app.get("/tasks", function (req, res) {
     { text: "Make a white Russian", completed: true, dueDate: "2020-05-01", priority: "doneColor", id: 6 },
   ];
 
-  res.send({
-    taskList
-  });
+  const query = "SELECT * FROM todos_table;"
+
+  connection.query(query, function(error,data) {
+    if(error) {
+      console.log("Error fetching task", error);
+      res.status(500).json({
+        error: error
+      })
+    } else {
+      res.status(200).json({
+        tasks: data
+      })
+    }
+  })
+
+  // res.send({
+  //   taskList
+  // });
+
 });
 
 app.post("/tasks", function (req, res) {
+  //req bosy will look like
+  //const body ={
+    //todoId: "6",
+    //text: "wash alan",
+    //originalDueDate: "2020-01-07",
+    //currentDueDate: "2020-02-23",
+    //priority: "medium",
+    //completed:false,
+    //twFlag: false,
+    //nwFlag: true,
+    //allWeeksFlag: true,
+    //deleted: false,
+    //userId: 2
+    //}
+  
   const text = req.body.text;
   const date = req.body.date;
   const priority = req.body.priority;
 
-  res.json({
-    message: `Received a request to add task ${text} with date ${date} and a priority of ${priority}`
-  });
+  const query ="INSERT INTO todos (todoId, text, originalDueDate, currentDueDate, priority, completed, twFlag, nwFlag, allWeeksFlag, deleted, userId)  VALUES (?,?,?,?,?,?,?,?,?,?,?);";
+
+  connection.query(query, [req.body.todoId, req.body.text, req.body.originalDueDate, req.body.currentDueDate, req.post.priority, completed, req.post.twFlag, req.post.nwFlag, req.post.allWeeksFlag, req.post.deleted, req.post.userId ], function(error, data) {
+      if(error) {
+        console.log("Error adding a task", error);
+        res.status(500).json({
+          error: error
+        })
+      }else {
+        connection.query(querySelect, [data.insertId], function(error,data) {
+          if(error) {
+
+          } else {
+            res.status(201).json({
+              task: data
+            })
+          }
+        })
+      }
+  })
+  // res.json({
+  //   message: `Received a request to add task ${text} with date ${date} and a priority of ${priority}`
+  // });
 
 });
 
