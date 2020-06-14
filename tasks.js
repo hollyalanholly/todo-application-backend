@@ -68,7 +68,9 @@ app.post("/tasks", function (req, res) {
   // const priority = req.body.priority;
 
   const query = "INSERT INTO todos_table VALUES (?,?,?,?,?,?,?,?,?,?,?)";
-  
+  const userQuery ="INSERT INTO User VALUES (?,?,?)";
+  const querySelect = "SELECT * FROM todos_table WHERE todoId = ?";
+  const querySelectUser = "SELECT * FROM User WHERE userId = ?";
   
   connection.query(query, [req.body.todoId, req.body.text, req.body.originalDueDate, req.body.currentDueDate, req.body.priority, req.body.completed, req.body.twFlag, req.body.nwFlag, req.body.allWeeksFlag, req.body.deleted, req.body.userId], function (error, data) {
     if (error) {
@@ -84,16 +86,15 @@ app.post("/tasks", function (req, res) {
             error: error
           })
         } else {
-          res.status(200).send(data)
+          res.status(201).json({
+            task: data
+          })
         }
       })
     }
   })
-  // res.json({
-  //   message: `Received a request to add task ${text} with date ${date} and a priority of ${priority}`
-  // });
-
 });
+
 
 app.delete("/tasks/:taskId", function (req, res) {
 
