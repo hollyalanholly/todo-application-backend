@@ -72,7 +72,7 @@ app.post("/tasks", function (req, res) {
   })
 });
 
-app.delete("/tasks/:taskId", function (req, res) {
+app.delete("/tasks/:todoId", function (req, res) {
   // const taskIdToBeDeleted = req.params.taskId;
   // let someResponse = {
   //   message: "You issued a delete request for ID: " + taskIdToBeDeleted
@@ -88,21 +88,19 @@ app.delete("/tasks/:taskId", function (req, res) {
 
   const queryDelete = "DELETE FROM todos_table WHERE todoId = ?";
   
-  connection.query(queryDelete, [req.body.todoId], function (error, data) {
+  connection.query(queryDelete, [req.params.todoId], function (error, data) {
     if (error) {
       console.log("Error deleting a task check user id exists", error);
       res.status(500).json({
         error: error
       })
     } else {
-      res.status(200).json({
-        task: data
-      })
+      res.status(200).send(data)
     }
   })
 });
 
-app.put("/tasks/:taskId", function (req, res) {
+app.put("/tasks/:todoId", function (req, res) {
   // const taskIdToBeAmended = req.params.taskId;
   // let somePutResponse = {
   //   message: "You issued a put request for ID: " + taskIdToBeAmended};
@@ -110,8 +108,8 @@ app.put("/tasks/:taskId", function (req, res) {
   //   res.status(404).send("Task " + taskIdToBeAmended + " does NOT exist")}
   // res.send({somePutResponse});
 
-  const queryPut = " UPDATE todos_table SET KEYS = (?) WHERE todid=(?);";
-  connection.query(queryPut, [req.params.taskId], [req.body.todoId, req.body.text, req.body.originalDueDate, req.body.currentDueDate, req.body.priority, req.body.completed, req.body.twFlag, req.body.nwFlag, req.body.allWeeksFlag, req.body.deleted, req.body.userId], function (error, data) {
+  const queryPut = "UPDATE todos_table SET text=?, originalDueDate=?, currentDueDate=?, priority=?, completed=?, twFlag=?, nwFlag=?, allWeeksFlag=?, deleted=?, userId=? WHERE todoId=?";
+  connection.query(queryPut, [req.params.todoId], function (error, data) {
     if (error) {
       console.log("Error changing task", error);
       res.status(500).json({
