@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 //connecting to database
 const connection = mysql.createConnection({
   host: "tr-course-instance1.chxrnd0gkww3.eu-west-2.rds.amazonaws.com",
-  user: "root",
+  user: "",
   password: "",
   database: "todos",
 })
@@ -109,16 +109,30 @@ app.put("/tasks/:todoId", function (req, res) {
   // res.send({somePutResponse});
 
   const queryPut = "UPDATE todos_table SET text=?, originalDueDate=?, currentDueDate=?, priority=?, completed=?, twFlag=?, nwFlag=?, allWeeksFlag=?, deleted=?, userId=? WHERE todoId=?";
-  connection.query(queryPut, [req.params.todoId], function (error, data) {
+  connection.query(queryPut, [req.body.text, req.body.originalDueDate, req.body.currentDueDate, req.body.priority, req.body.completed, req.body.twFlag, req.body.nwFlag, req.body.allWeeksFlag, req.body.deleted, req.body.userId, req.params.todoId], function (error, data) {
     if (error) {
       console.log("Error changing task", error);
       res.status(500).json({
         error: error
       });
     } else {
-      res.status(200).send(data)
+      res.sendStatus(200);
     }
   });
 });
+
+// app.put("/tasks/:todoId", function (req, res) {
+//   const queryPut = "UPDATE `todos_table` SET `todos_table`.`text` = ?, `todos_table`.`originalDueDate` = ?, `todos_table`.`currentDueDate` = ?, `todos_table`.`priority` = ?, `todos_table`.`completed` = ?, `todos_table`.`twFlag` = ?, `todos_table`.`nwFlag` = ?, `todos_table`.`allWeeksFlag` = ?, `todos_table`.`deleted` = ?, `todos_table`.`userId` = ? WHERE (`todos_table`.`todoId`= ?)";
+//   connection.query(queryPut, [req.body.text, req.body.originalDueDate, req.body.currentDueDate, req.body.priority, req.body.completed, req.body.twFlag, req.body.nwFlag, req.body.allWeeksFlag, req.body.deleted, req.body.userId, req.params.todoId], function (error) {
+//     if (error) {
+//       console.log("Error changing task", error);
+//       res.status(500).json({
+//         error: error
+//       });
+//     } else {
+//       res.sendStatus(200);
+//     }
+//   });
+// });
 
 module.exports.handler = serverless(app);
