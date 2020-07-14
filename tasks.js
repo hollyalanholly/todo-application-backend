@@ -12,8 +12,8 @@ app.use(bodyParser.json());
 //connecting to database
 const connection = mysql.createConnection({
   host: "tr-course-instance1.chxrnd0gkww3.eu-west-2.rds.amazonaws.com",
-  user: "",
-  password: "",
+  user: "root",
+  password: "Philip!0",
   database: "todos",
 })
 
@@ -26,8 +26,11 @@ app.get("/tasks", function (req, res) {
       res.status(500).json({
         error: error
       });
-    } else {
-      res.status(200).send(data)
+    } else 
+    {
+      res.status(200).json({
+        tasks: data
+      })
     }
   });
 });
@@ -44,12 +47,12 @@ app.get("/tasks", function (req, res) {
 // });
 
 app.post("/tasks", function (req, res) {
-  const query = "INSERT INTO todos_table VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+  const query = "INSERT INTO todos_table VALUES (?,?,?,?,?,?,?,?)";
   const userQuery = "INSERT INTO User VALUES (?,?,?)";
   const querySelect = "SELECT * FROM todos_table WHERE todoId = ?";
   const querySelectUser = "SELECT * FROM User WHERE userId = ?";
 
-  connection.query(query, [req.body.todoId, req.body.text, req.body.originalDueDate, req.body.currentDueDate, req.body.priority, req.body.completed, req.body.twFlag, req.body.nwFlag, req.body.allWeeksFlag, req.body.deleted, req.body.userId], function (error, data) {
+  connection.query(query, [req.body.todoId, req.body.text, req.body.originalDueDate, req.body.currentDueDate, req.body.priority, req.body.completed, req.body.deleted, req.body.userId], function (error, data) {
     if (error) {
       console.log("Error adding a task", error);
       res.status(500).json({
@@ -108,8 +111,8 @@ app.put("/tasks/:todoId", function (req, res) {
   //   res.status(404).send("Task " + taskIdToBeAmended + " does NOT exist")}
   // res.send({somePutResponse});
 
-  const queryPut = "UPDATE todos_table SET text=?, originalDueDate=?, currentDueDate=?, priority=?, completed=?, twFlag=?, nwFlag=?, allWeeksFlag=?, deleted=?, userId=? WHERE todoId=?";
-  connection.query(queryPut, [req.body.text, req.body.originalDueDate, req.body.currentDueDate, req.body.priority, req.body.completed, req.body.twFlag, req.body.nwFlag, req.body.allWeeksFlag, req.body.deleted, req.body.userId, req.params.todoId], function (error, data) {
+  const queryPut = "UPDATE todos_table SET text=?, originalDueDate=?, currentDueDate=?, priority=?, completed=?, deleted=?, userId=? WHERE todoId=?";
+  connection.query(queryPut, [req.body.text, req.body.originalDueDate, req.body.currentDueDate, req.body.priority, req.body.completed, req.body.deleted, req.body.userId, req.params.todoId], function (error, data) {
     if (error) {
       console.log("Error changing task", error);
       res.status(500).json({
